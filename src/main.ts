@@ -1,79 +1,95 @@
-let stringArr = ['one', 'hey', 'Mate']
+// Type Aliases -- renaming things -- cannot be done with "interface"
+type stringOrNumber = string | number
 
-let guitars = ['Strat', 'Les Paul', 5150]
+type stringOrNumberArray = (string | number)[]
 
-let mixedData = ['EVH', 1984, true]
-
-stringArr[0] = 'Tony'
-stringArr.push('hey')
-
-guitars[0] = 1984
-guitars.unshift()
-
-let test = []
-let bands: string[] = []
-bands.push('van halen')
-
-// tuple
-let myTuple: [string, number, boolean] = ['Dave', 42, true]
-
-let mixed = ['John', 1, false]
-
-myTuple[1] = 41
-
-// Objects
-let myObj: object
-myObj = []
-console.log(typeof myObj)
-myObj = bands
-myObj = {}
-
-const exampleObj = {
-    prop1: 'Kave',
-    prop2: true,
-
-}
-
-exampleObj.prop1 = 'Tony'
-
-interface Guitarist {
+type Guitarist = {
     name?: string,
     active: boolean,
-    albums: (string | number)[]
+    albums: stringOrNumberArray
 }
 
-let evh: Guitarist = {
-    name: 'Eddie',
-    active: false,
-    albums: [1984, 5150, 'OU812']
+type UserId = stringOrNumber
+
+let myName: 'Matt'
+
+let userName: 'Matt' | 'John' | 'Amy'
+userName = 'Amy'
+
+// functions 
+const add = (a: number, b: number): number => {
+    return a + b
 }
 
-let jp: Guitarist = {
-    name: 'Jimmy',
-    active: true,
-    albums: ['I', 'II', 'IV']
+const logMsg = (message: any): void => {
+    console.log(message)
 }
 
-evh = jp
+logMsg('Hello')
+logMsg(add(2, 3))
 
-const greetGuitarist = (guitarist: Guitarist) => {
-    if (guitarist.name) {
-        return `Hello ${guitarist.name.toUpperCase()}!`
+let subtract = (c: number, d: number): number => {
+    return c - d
+}
+
+type mathFunction = (a: number, b: number) => number
+// interface mathFunction {
+//     (a: number, b: number): number
+// }
+let multiply: mathFunction = function (c, d) {
+    return c * d
+}
+
+logMsg(multiply(2, 2))
+
+// optional paramaters 
+const addAll = (a: number, b: number, c?: number):
+    number => {
+    if (typeof c !== 'undefined') {
+        return a + b + c
     }
-    return 'Hello'
+    return a + b
 }
 
-console.log(greetGuitarist(jp))
-
-// Enums
-// "Unlike most TypeSCript features, Enums are not a type-level addition to Javascript but something added to the language and runtime "
-
-enum Grade {
-    U,
-    D,
-    C,
-    B,
-    A,
+// default param value
+const sumAll = (a: number = 10, b: number, c: number = 2):
+    number => {
+    return a + b + c
 }
 
-console.log(Grade.U)
+logMsg(addAll(1, 2, 3))
+logMsg(addAll(1, 2))
+logMsg(sumAll(1, 2))
+logMsg(sumAll(undefined, 2))
+
+//"Rest" of the Paramaters "...nums"
+
+const total = (a: number, ...nums: number[]): number => {
+    return a + nums.reduce((prev, curr) => prev + curr)
+}
+
+logMsg(total(10, 2, 3, 4))
+
+const createError = (errMsg: string): never => {
+    throw new Error(errMsg)
+}
+
+const infinite = () => {
+    let i: number = 1
+    while (true) {
+        i++
+        if (i > 100) break
+    }
+}
+// custom type guard
+const isNumber = (value: any): boolean => {
+    return typeof value === 'number'
+        ? true : false
+}
+// use of the never type
+const numberOrString = (value: number | string):
+    string => {
+    if (typeof value === 'string') return 'string'
+    if (isNumber(value)) return 'number'
+    return createError('This Should never happen')
+}
